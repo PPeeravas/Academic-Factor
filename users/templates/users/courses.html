@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}Our Courses{% endblock %}
+{% block content %}
+  <div class="container py-5">
+    {% if user.is_authenticated and my_courses %}
+      <div class="mb-5">
+        <h2 class="display-6 fw-bold text-success mb-3">
+          <i class="bi bi-journal-bookmark-fill"></i> My Courses
+        </h2>
+        <p class="text-muted mb-4">Continue learning where you left off.</p>
+        <div class="row">
+          {% for course in my_courses %}
+            <div class="col-md-6 col-lg-4 mb-4">
+              <div class="card h-100 border-0 shadow-sm card-hover-effect border-start border-success border-4">
+                <div class="course-img-container">
+                  {% if course.image %}
+                    <img src="{{ course.image.url }}"
+                         class="card-img-top course-img"
+                         alt="{{ course.title }}">
+                  {% else %}
+                    <img src="https://via.placeholder.com/400x250?text=No+Image"
+                         class="card-img-top course-img"
+                         alt="No Image">
+                  {% endif %}
+                  <div class="position-absolute top-0 end-0 m-2">
+                    <span class="badge bg-success">Enrolled</span>
+                  </div>
+                </div>
+                <div class="card-body d-flex flex-column p-4">
+                  <h5 class="card-title fw-bold text-dark mb-2">{{ course.title }}</h5>
+                  <p class="card-text text-muted mb-4 flex-grow-1">{{ course.description|truncatewords:15 }}</p>
+                  <div class="d-grid mt-auto">
+                    <a href="{% url 'lesson' course.id %}"
+                       class="btn btn-outline-success fw-bold rounded-pill">Go to Class</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+        <hr class="my-5">
+      </div>
+    {% endif %}
+    <div class="mb-5">
+      <h2 class="display-6 fw-bold text-dark mb-3">
+        <i class="bi text-warning"></i> Recommended Courses
+      </h2>
+      <p class="text-muted mb-4">Explore new topics and expand your skills.</p>
+      <div class="row">
+        {% for course in recommended_courses %}
+          <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm card-hover-effect">
+              <div class="course-img-container">
+                {% if course.image %}
+                  <img src="{{ course.image.url }}"
+                       class="card-img-top course-img"
+                       alt="{{ course.title }}">
+                {% else %}
+                  <img src="https://via.placeholder.com/400x250?text=No+Image"
+                       class="card-img-top course-img"
+                       alt="No Image">
+                {% endif %}
+              </div>
+              <div class="card-body d-flex flex-column p-4">
+                <h5 class="card-title fw-bold text-dark mb-2">{{ course.title }}</h5>
+                <p class="card-text text-muted mb-4 flex-grow-1">{{ course.description|truncatewords:15 }}</p>
+                <hr class="text-muted opacity-25">
+                <div class="d-flex justify-content-between align-items-center mt-auto">
+                  <div>
+                    <span class="text-muted small d-block">Price</span>
+                    <span class="text-primary fw-bold fs-5">{{ course.price }} THB</span>
+                  </div>
+                  <a href="{% url 'course_detail' course.id %}"
+                     class="btn btn-warning text-white fw-bold px-4 rounded-pill">View Details</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% empty %}
+          <div class="col-12 text-center py-5">
+            {% if my_courses %}
+              <h4 class="text-muted">You have enrolled in all available courses! 🎉</h4>
+            {% else %}
+              <h4 class="text-muted">No courses available at the moment.</h4>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <style>
+    .course-img-container {
+        height: 220px;
+        overflow: hidden;
+        border-top-left-radius: 0.375rem;
+        border-top-right-radius: 0.375rem;
+        position: relative;
+    }
+    .course-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    .card-hover-effect {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card-hover-effect:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+    .card-hover-effect:hover .course-img {
+        transform: scale(1.1);
+    }
+  </style>
+{% endblock %}

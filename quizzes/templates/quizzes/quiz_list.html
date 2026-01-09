@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container py-5">
+        <a href="{% url 'test_dashboard' %}"
+           class="btn btn-outline-secondary mb-4">&larr; Back to Courses</a>
+        <h2 class="fw-bold">{{ course.title }} - Available Tests</h2>
+        <div class="list-group mt-4">
+            {% for quiz in quizzes %}
+                <a href="{% url 'take_quiz' quiz.id %}"
+                   class="list-group-item list-group-item-action d-flex justify-content-between align-items-center p-4">
+                    <span class="fs-5 fw-bold">{{ quiz.title }}</span>
+                    <span class="badge bg-success rounded-pill">Start Now</span>
+                </a>
+            {% empty %}
+                <div class="alert alert-info">No tests created for this course yet.</div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

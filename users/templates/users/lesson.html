@@ -1,0 +1,259 @@
+{% extends "base.html" %} {% block title %}{{ course.title }} - Lessons
+{%endblock %} {% block content %}
+<div class="container py-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fw-bold mb-0">{{ course.title }}</h2>
+      <small class="text-muted">
+        {{ course.videos.count }} Videos • {{ course.pdfs.count }} Documents
+      </small>
+    </div>
+    <a href="{% url 'courses' %}" class="btn btn-outline-secondary"
+      >Back to Dashboard</a
+    >
+  </div>
+
+  <div class="row">
+    <div class="col-lg-8 mb-4">
+      <div class="card shadow-lg border-0 bg-dark text-white overflow-hidden">
+        <div class="video-wrapper" id="videoContainer">
+          <video
+            id="mainVideoPlayer"
+            controls
+            controlsList="nodownload"
+            oncontextmenu="return false;"
+          >
+            {% if course.videos.first %}
+            <source
+              src="{{ course.videos.first.video_file.url }}"
+              type="video/mp4"
+            />
+            {% endif %} Your browser does not support the video tag.
+          </video>
+
+          <div class="watermark-overlay">
+            {% for i in "123456" %}
+            <div class="watermark-text">
+              {{ user.username }}
+              <br />
+              {{ user.id_number }}
+            </div>
+            {% endfor %}
+          </div>
+
+          <button onclick="toggleFullscreen()" class="custom-fullscreen-btn">
+            <i class="bi bi-arrows-fullscreen"></i> Fullscreen
+          </button>
+        </div>
+
+        <div class="card-body bg-light text-dark">
+          <h5 id="videoTitle" class="fw-bold">
+            {% if course.videos.first %} {{ course.videos.first.title }} {% else
+            %} No videos available {% endif %}
+          </h5>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-header bg-white fw-bold">
+          <i class="bi bi-collection-play"></i> Video Playlist
+        </div>
+        <div
+          class="list-group list-group-flush overflow-auto"
+          style="max-height: 500px"
+        >
+          {% for video in course.videos.all %}
+          <button
+            class="list-group-item list-group-item-action d-flex justify-content-between align-items-center video-btn"
+            onclick="changeVideo('{{ video.video_file.url }}', '{{ video.title }}', this)"
+          >
+            <div><i class="bi bi-play-circle me-2"></i> {{ video.title }}</div>
+            <span class="badge bg-light text-dark rounded-pill">Watch</span>
+          </button>
+          {% empty %}
+          <div class="p-4 text-center text-muted">No videos uploaded yet.</div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="my-5" />
+
+  <h3 class="fw-bold mb-4"><i class="bi bi-files"></i> Course Documents</h3>
+  <div class="row">
+    {% for pdf in course.pdfs.all %}
+    <div class="col-md-6 mb-4">
+      <div class="card shadow-sm border-0">
+        <div
+          class="card-header bg-primary text-white d-flex justify-content-between align-items-center"
+        >
+          <span class="text-truncate" style="max-width: 200px">
+            <i class="bi bi-file-earmark-pdf"></i> {{ pdf.title }}
+          </span>
+          <a
+            href="{{ pdf.pdf_file.url }}"
+            download
+            class="btn btn-sm btn-light text-primary fw-bold shadow-sm"
+          >
+            <i class="bi bi-download"></i> Download
+          </a>
+        </div>
+        <div class="content-wrapper" style="height: 500px">
+          <iframe
+            src="{{ pdf.pdf_file.url }}#toolbar=0"
+            width="100%"
+            height="100%"
+          ></iframe>
+          <div class="watermark-overlay">
+            {% for i in "123456" %}
+            <div class="watermark-text dark-text">
+              {{ user.username }}
+              <br />
+              {{ user.id_number }}
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+      <p class="text-muted">No documents available.</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+  // 1. Playlist Logic
+  function changeVideo(url, title, element) {
+    var videoPlayer = document.getElementById("mainVideoPlayer");
+    var titleLabel = document.getElementById("videoTitle");
+
+    videoPlayer.src = url;
+    titleLabel.innerText = title;
+    videoPlayer.play();
+
+    // Update active state on buttons
+    document.querySelectorAll(".video-btn").forEach((btn) => {
+      btn.classList.remove("active", "bg-primary", "text-white");
+    });
+    element.classList.add("active", "bg-primary", "text-white");
+  }
+
+  // 2. Fullscreen Logic
+  function toggleFullscreen() {
+    var container = document.getElementById("videoContainer");
+    if (!document.fullscreenElement) {
+      if (container.requestFullscreen) container.requestFullscreen();
+      else if (container.webkitRequestFullscreen)
+        container.webkitRequestFullscreen();
+      else if (container.msRequestFullscreen) container.msRequestFullscreen();
+    } else {
+      if (document.exitFullscreen) document.exitFullscreen();
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+    }
+  }
+</script>
+
+<style>
+  /* Base Layout */
+  .video-wrapper,
+  .content-wrapper {
+    position: relative;
+    width: 100%;
+    background-color: #000;
+  }
+
+  video {
+    width: 100%;
+    display: block;
+    /* Ensure native controls appear above background but below watermark if possible,
+       though standard behavior usually forces controls to top. */
+    z-index: 1;
+  }
+
+  iframe {
+    border: none;
+  }
+
+  /* Watermark Container */
+  .watermark-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    pointer-events: none; /* Allows clicks to pass through to the video controls */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-content: space-around;
+    overflow: hidden;
+  }
+
+  /* General Watermark Text */
+  .watermark-text {
+    font-size: 1.5rem;
+    font-weight: bold;
+    transform: rotate(-30deg);
+    user-select: none;
+    padding: 80px;
+    color: rgba(255, 255, 255, 0.08); /* Video: 8% Opacity White */
+  }
+
+  /* PDF Specific Style */
+  .dark-text {
+    color: rgba(0, 0, 0, 0.03) !important; /* PDF: 3% Opacity Black */
+  }
+
+  /* Custom Fullscreen Button */
+  .custom-fullscreen-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    z-index: 20;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: 1px solid white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+    /* Ensure button is clickable even if z-index fighting occurs */
+    pointer-events: auto;
+  }
+  .custom-fullscreen-btn:hover {
+    background-color: rgba(0, 0, 0, 0.9);
+  }
+
+  /* Hide Native Chrome Fullscreen Button to force use of custom one */
+  video::-webkit-media-controls-fullscreen-button {
+    display: none !important;
+  }
+
+  /* Fullscreen Behavior */
+  .video-wrapper:fullscreen {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: black;
+  }
+
+  .video-wrapper:fullscreen video {
+    max-height: 100vh;
+    max-width: 100vw;
+  }
+
+  /* Ensure custom button stays visible in fullscreen */
+  .video-wrapper:fullscreen .custom-fullscreen-btn {
+    z-index: 2147483647; /* Max z-index to ensure it stays on top */
+  }
+</style>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container py-5">
+        <h2 class="fw-bold mb-4">📝 Test Center</h2>
+        <p class="text-muted">Select a course to view available tests.</p>
+        <div class="row">
+            {% for course in courses %}
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow-sm h-100 border-0">
+                        <div class="card-body text-center">
+                            <h5 class="fw-bold">{{ course.title }}</h5>
+                            <a href="{% url 'course_quizzes' course.id %}"
+                               class="btn btn-primary mt-3 rounded-pill px-4">View Tests</a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p>No courses available.</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

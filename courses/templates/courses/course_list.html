@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+  All Courses -
+  Teacher Peem
+{% endblock %}
+{% block content %}
+  <div class="p-5 mb-4 rounded-3 text-center">
+    <div class="container-fluid py-5 gap-5 justify-content-center">
+      <h3>คอร์สทั้งหมด (All Courses)</h3>
+      <div class="container-sm d-flex gap-5 justify-content-center p-5 flex-wrap">
+        {% for course in courses %}
+          <div class="card shadow-sm" style="width: 18rem">
+            <img src="{% static 'images/ppeem.png' %}"
+                 class="card-img-top"
+                 alt="{{ course.title }}" />
+            <div class="card-body">
+              <h5 class="card-title">{{ course.title }}</h5>
+              <p class="card-text">{{ course.description|truncatechars:50 }}</p>
+              <a href="{% url 'course_detail' course.id %}"
+                 class="btn btn-warning w-100">เข้าสู่บทเรียน</a>
+            </div>
+          </div>
+        {% empty %}
+          <p>No courses available yet.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

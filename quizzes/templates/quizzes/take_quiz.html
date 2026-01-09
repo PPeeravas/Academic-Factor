@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}{{ quiz.title }}{% endblock %}
+{% block content %}
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script"
+            async
+            src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <div class="container py-5">
+        <a href="{% url 'course_quizzes' quiz.course.id %}"
+           class="btn btn-outline-secondary mb-4">&larr; Back</a>
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-dark text-white p-4">
+                <h2 class="mb-0">{{ quiz.title }}</h2>
+            </div>
+            <div class="card-body p-5">
+                {% for question in quiz.questions.all %}
+                    <div class="mb-5 border-bottom pb-4">
+                        <h5 class="fw-bold text-primary mb-3">Question {{ forloop.counter }}</h5>
+                        <div class="fs-4 mb-3">{{ question.problem_text|safe }}</div>
+                        <button class="btn btn-sm btn-light border"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#answer{{ question.id }}">Show Answer</button>
+                        <div class="collapse mt-2" id="answer{{ question.id }}">
+                            <div class="card card-body bg-light">
+                                <strong>Answer:</strong>
+                                <span class="text-success fs-5">{{ question.answer_text }}</span>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p>No questions in this test.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

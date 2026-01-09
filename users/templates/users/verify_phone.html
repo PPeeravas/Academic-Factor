@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Verify Phone{% endblock %}
+{% block content %}
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-5">
+            <div class="card shadow border-0">
+                <div class="card-body p-5 text-center">
+                    <h3 class="fw-bold mb-3">Verify Your Phone</h3>
+                    <p class="text-muted">
+                        We sent a code to <strong>{{ phone }}</strong>
+                    </p>
+                    {% if messages %}
+                        {% for message in messages %}<div class="alert alert-danger">{{ message }}</div>{% endfor %}
+                    {% endif %}
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            <input type="text"
+                                   name="otp"
+                                   class="form-control form-control-lg text-center"
+                                   placeholder="Enter 6-digit OTP"
+                                   maxlength="6"
+                                   style="letter-spacing: 5px;
+                                          font-size: 24px"
+                                   required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 btn-lg mb-3">Verify & Login</button>
+                    </form>
+                    <small class="text-muted">Didn't receive code? <a href="{% url 'register' %}">Try registering again</a></small>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

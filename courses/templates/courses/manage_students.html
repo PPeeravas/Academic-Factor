@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="container py-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold">Student Access Management</h2>
+            <form class="d-flex" method="GET">
+                <input class="form-control me-2"
+                       type="search"
+                       name="search"
+                       placeholder="Search username..."
+                       value="{{ request.GET.search|default:'' }}">
+                <button class="btn btn-outline-primary" type="submit">Search</button>
+            </form>
+        </div>
+        <div class="card shadow-sm border-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Student</th>
+                            <th>Course</th>
+                            <th>Enrolled Date</th>
+                            <th>Expiry Date</th>
+                            <th>Status</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entry in enrollments %}
+                            <tr>
+                                <td>
+                                    <div class="fw-bold">{{ entry.user.username }}</div>
+                                    <small class="text-muted">{{ entry.user.email }}</small>
+                                </td>
+                                <td>{{ entry.course.title }}</td>
+                                <td>{{ entry.enrolled_at|date:"d M Y" }}</td>
+                                <td>{{ entry.expires_at|date:"d M Y" }}</td>
+                                <td>
+                                    {% if entry.is_active %}
+                                        <span class="badge bg-success">Active</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Expired</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    <form action="{% url 'revoke_access' entry.id %}"
+                                          method="POST"
+                                          onsubmit="return confirm('Revoke access for this student?');">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger btn-sm">
+                                            <i class="bi bi-person-x"></i> Revoke
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center py-4 text-muted">No students currently enrolled.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

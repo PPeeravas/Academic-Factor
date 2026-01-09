@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Register - Academic Factor{% endblock %}
+{% block content %}
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <div class="card shadow border-0 mt-5">
+        <div class="card-body p-4">
+          <h3 class="text-center mb-4 font-weight-bold">Create Account</h3>
+          <form method="POST">
+            {% csrf_token %}
+            {% for field in form %}
+              <div class="mb-3">
+                <label class="form-label text-muted">{{ field.label }}</label>
+                {# CHECK: Is this a password field? #}
+                {% if field.field.widget.input_type == 'password' %}
+                  <div class="input-group">
+                    <input type="password"
+                           name="{{ field.name }}"
+                           id="{{ field.id_for_label }}"
+                           class="form-control form-control-lg {% if field.errors %}is-invalid{% endif %}"
+                           placeholder="Enter {{ field.label }}">
+                    <button class="btn btn-outline-secondary"
+                            type="button"
+                            onclick="togglePassword('{{ field.id_for_label }}', this)">
+                      <i class="bi bi-eye"></i>
+                    </button>
+                    {# Invalid feedback must be outside input-group to show correctly or handled carefully #}
+                    {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>{% endif %}
+                  </div>
+                {% else %}
+                  <input type="{{ field.field.widget.input_type }}"
+                         name="{{ field.name }}"
+                         id="{{ field.id_for_label }}"
+                         class="form-control form-control-lg {% if field.errors %}is-invalid{% endif %}"
+                         placeholder="Enter {{ field.label }}"
+                         value="{{ field.value|default:'' }}" />
+                  {% if field.errors %}<div class="invalid-feedback">{{ field.errors|striptags }}</div>{% endif %}
+                {% endif %}
+                {% if field.help_text %}<small class="form-text text-muted">{{ field.help_text }}</small>{% endif %}
+              </div>
+            {% endfor %}
+            <div class="d-grid mt-4">
+              <button type="submit" class="btn btn-success btn-lg">Sign Up</button>
+            </div>
+          </form>
+          <div class="mt-4 text-center">
+            <small class="text-muted">
+              Already have an account?
+              <a href="{% url 'login' %}"
+                 class="text-primary text-decoration-none fw-bold">Login here</a>
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+  function togglePassword(fieldId, btn) {
+    const input = document.getElementById(fieldId);
+    const icon = btn.querySelector('i');
+
+    if (input.type === "password") {
+      input.type = "text";
+      icon.classList.remove('bi-eye');
+      icon.classList.add('bi-eye-slash');
+    } else {
+      input.type = "password";
+      icon.classList.remove('bi-eye-slash');
+      icon.classList.add('bi-eye');
+    }
+  }
+  </script>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Past Papers | Academic Factor{% endblock %}
+{% block content %}
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <h1 class="fw-bold mb-3">Past Papers Library</h1>
+            <p class="text-muted mb-4">Download exam papers and practice sheets for free.</p>
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <form method="GET" action="{% url 'past_papers' %}">
+                        <div class="input-group input-group-lg shadow-sm">
+                            <span class="input-group-text bg-white border-end-0">
+                                <i class="bi bi-search text-muted"></i>
+                            </span>
+                            <input type="text"
+                                   name="q"
+                                   class="form-control border-start-0"
+                                   placeholder="Search by Label (e.g. Math, Physics, 66)..."
+                                   value="{{ request.GET.q|default:'' }}">
+                            <button class="btn btn-primary px-4 fw-bold" type="submit">Search</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            {% for paper in papers %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm border-0 hover-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div class="bg-light rounded-circle p-3 text-danger">
+                                    <i class="bi bi-file-earmark-pdf fs-3"></i>
+                                </div>
+                                <span class="badge bg-warning text-dark rounded-pill">{{ paper.category }}</span>
+                            </div>
+                            <h5 class="fw-bold text-truncate" title="{{ paper.title }}">{{ paper.title }}</h5>
+                            <p class="text-muted small mb-0">Uploaded: {{ paper.uploaded_at|date:"d M Y" }}</p>
+                        </div>
+                        <div class="card-footer bg-white border-0 pt-0 pb-4">
+                            <a href="{{ paper.pdf_file.url }}"
+                               download
+                               class="btn btn-outline-primary w-100 fw-bold">
+                                <i class="bi bi-download me-2"></i> Download PDF
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12 text-center py-5">
+                    <div class="text-muted fs-1 mb-3">
+                        <i class="bi bi-folder-x"></i>
+                    </div>
+                    <h3>No papers found.</h3>
+                    <p class="text-muted">Try searching for a different label.</p>
+                    <a href="{% url 'past_papers' %}" class="btn btn-link">View All</a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <style>
+    /* Slight animation when hovering over a paper */
+    .hover-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+    </style>
+{% endblock %}

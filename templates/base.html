@@ -1,0 +1,266 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet" />
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']]
+    }
+  };
+    </script>
+    <script id="MathJax-script"
+            async
+            src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <title>
+      {% block title %}Teacher Peem{% endblock %}
+    </title>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top shadow-sm">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'home' %}">Academic Factor</a>
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarContent">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarContent">
+          {% block navbar_links %}
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'courses' %}">Courses</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'test_dashboard' %}">Test</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'past_papers' %}">Past Papers</a>
+              </li>
+            </ul>
+          {% endblock %}
+          <div class="d-flex">
+            <div class="d-flex align-items-center">
+              {% if user.is_authenticated %}
+                <span class="navbar-text me-3 text-dark">Welcome, {{ user.username }}</span>
+                <a href="{% url 'logout' %}" class="btn btn-outline-danger">Logout</a>
+              {% else %}
+                <a href="{% url 'login' %}" class="btn btn-outline-primary me-2">Login</a>
+                <a href="{% url 'register' %}" class="btn btn-primary">Register</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+    {% if user.is_staff %}
+      <li class="nav-item ">
+        <a class="nav-link text-danger fw-bold  "
+           href="{% url 'manage_students' %}">
+          <i class="bi bi-shield-lock"></i> Manage Students
+        </a>
+      </li>
+    {% endif %}
+    <div class="container">
+      {% block content %}{% endblock %}
+    </div>
+    {% block footer %}
+      <footer class="bg-dark text-white pt-5 pb-3 mt-5">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-4 mb-4">
+              <h5 class="fw-bold text-warning mb-3">กวดวิชาแนะนำ</h5>
+              <div class="row">
+                <div class="col-6">
+                  <ul class="list-unstyled footer-links">
+                    <li>
+                      <a href="#">Academic Factor</a>
+                    </li>
+                    <li>
+                      <a href="#">P'Peem Peeravas</a>
+                    </li>
+                    <li>
+                      <a href="#">P'Alis Arissara</a>
+                    </li>
+                  </ul>
+                </div>
+                <div class="col-6">
+                  <ul class="list-unstyled footer-links">
+                    <li>
+                      <a href="#">KKW Student</a>
+                    </li>
+                    <li>
+                      <a href="#">CHULA Genius</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-2 mb-4">
+              <h5 class="fw-bold text-warning mb-3">เกี่ยวกับเรา</h5>
+              <ul class="list-unstyled footer-links">
+                <li>
+                  <a href="#">พีรวัส พิบูลย์วรกุล</a>
+                </li>
+                <li>
+                  <a href="#">อริสรา ประไพวรรณ์กุล</a>
+                </li>
+                <li>
+                  <a href="#">พี่ภีม</a>
+                </li>
+                <li>
+                  <a href="#">พี่อลิส</a>
+                </li>
+                <li>
+                  <a href="#">TCASter</a>
+                </li>
+                <li>
+                  <a href="#">สาขาที่ใกล้ฉัน</a>
+                </li>
+              </ul>
+            </div>
+            <div class="col-lg-2 mb-4">
+              <h5 class="fw-bold text-warning mb-3">อื่น ๆ</h5>
+              <ul class="list-unstyled footer-links">
+                <li>
+                  <a href="#">Terms and Conditions</a>
+                </li>
+                <li>
+                  <a href="#">Privacy Policy</a>
+                </li>
+                <li>
+                  <a href="#">Data Protection</a>
+                </li>
+              </ul>
+              <div class="mt-4">
+                <p class="small text-white-50 mb-2">ส่วนหนึ่งของบริษัทในเครือ</p>
+                <img src="{% static 'images/thumbnail.png' %}"
+                     alt="Learn Corporation"
+                     width="50">
+              </div>
+            </div>
+            <div class="col-lg-4 mb-4">
+              <h5 class="fw-bold text-warning mb-3">โทร.</h5>
+              <h2 class="fw-bold">
+                <a href="tel:022519456" class="text-white text-decoration-none">092-719-7977</a>
+              </h2>
+              <p class="small text-white-50">(08.00-20.00 น.)</p>
+              <h5 class="fw-bold text-warning mb-2 mt-4">ที่อยู่บริษัท</h5>
+              <p class="small text-white-50">
+                บริษัท อะคาเดมิค แฟคเตอร์ จำกัด (สำนักงานใหญ่)
+                <br>
+                ไร้ซึ่งที่อยู่ ณ ปัจจุบัน
+              </p>
+              <h5 class="fw-bold text-warning mb-3 mt-4">ติดตามเราได้ที่</h5>
+              <div class="d-flex gap-3 social-icons">
+                <a href="https://www.facebook.com/ppeeravas/" target = "_blank">
+                  <img src="https://shoponline.ondemand.in.th/static/frontend/OnDemandV3/default/th_TH/images/shared/icon/Facebook-icon.svg"
+                       width="36">
+                </a>
+                <a href="https://www.youtube.com/@ppeeravas" target = "_blank">
+                  <img src="https://shoponline.ondemand.in.th/static/frontend/OnDemandV3/default/th_TH/images/shared/icon/Youtube-icon.svg"
+                       width="36">
+                </a>
+                <a href="https://www.instagram.com/p_peeravas/" target = "_blank">
+                  <img src="https://shoponline.ondemand.in.th/static/frontend/OnDemandV3/default/th_TH/images/shared/icon/IG-icon.svg"
+                       width="36">
+                </a>
+                <a href="#">
+                  <img src="https://shoponline.ondemand.in.th/static/frontend/OnDemandV3/default/th_TH/images/shared/icon/Line-icon.svg"
+                       width="36">
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+      <style>
+        /* Footer Link Styles */
+        .footer-links li {
+          margin-bottom: 8px;
+        }
+        .footer-links a {
+          color: #e0e0e0;
+          text-decoration: none;
+          font-size: 14px;
+          transition: color 0.2s;
+        }
+        .footer-links a:hover {
+          color: #ffc107; /* Bootstrap Warning Yellow */
+          text-decoration: underline;
+        }
+
+        /* Social Icons Hover Effect */
+        .social-icons img {
+          transition: transform 0.2s;
+        }
+        .social-icons a:hover img {
+          transform: scale(1.1);
+        }
+      </style>
+    {% endblock %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <div id="cookieBanner"
+         class="fixed-bottom bg-dark text-white p-3 text-center shadow-lg"
+         style="display: none;
+                z-index: 9999">
+      <div class="container d-flex justify-content-between align-items-center flex-column flex-md-row">
+        <span class="mb-2 mb-md-0">
+          🍪 We use cookies to ensure you get the best experience on our website.
+          <a href="#" class="text-warning text-decoration-underline">Learn more</a>
+        </span>
+        <button onclick="acceptCookies()"
+                class="btn btn-warning btn-sm fw-bold px-4 rounded-pill">Got it!</button>
+      </div>
+    </div>
+    <script>
+    // 1. Check if user already accepted
+    document.addEventListener("DOMContentLoaded", function() {
+        if (!getCookie("cookieConsent")) {
+            document.getElementById("cookieBanner").style.display = "block";
+        }
+    });
+
+    // 2. Function to set the cookie when clicked
+    function acceptCookies() {
+        setCookie("cookieConsent", "true", 30); // Save for 30 days
+        document.getElementById("cookieBanner").style.display = "none";
+    }
+
+    // --- Helper Functions ---
+    
+    // Set a Cookie
+    function setCookie(name, value, days) {
+        var expires = "";
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+
+    // Get a Cookie
+    function getCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0;i < ca.length;i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') c = c.substring(1,c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+        }
+        return null;
+    }
+    </script>
+  </body>
+</html>

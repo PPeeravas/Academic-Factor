@@ -1,0 +1,50 @@
+{% extends 'base.html' %} {% load static %} {% load humanize %} {% block content
+%}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header bg-primary text-white text-center py-3">
+          <h4 class="mb-0 fw-bold">Secure Checkout</h4>
+        </div>
+        <div class="card-body p-5 text-center">
+          <h5 class="text-muted mb-3">You are purchasing:</h5>
+          <h3 class="fw-bold mb-4">{{ course.title }}</h3>
+          <div class="display-4 text-primary fw-bold mb-4">
+            ฿{{ course.price|intcomma }}
+          </div>
+          <hr />
+          <div class="bg-light p-4 rounded mb-4">
+            <p class="fw-bold text-dark mb-2">Scan to Pay (PromptPay)</p>
+            <img
+              src="{% static 'images/QRCODE.jpg' %}"
+              alt="QR Code"
+              width="500"
+              class="mb-2"
+            />
+            <p class="small text-muted">Academic Factor Co., Ltd.</p>
+          </div>
+          <p class="text-danger small">
+            <i class="bi bi-info-circle"></i>
+            After payment, click the button below to confirm.
+          </p>
+          <form action="{% url 'payment_success' course.id %}" method="POST">
+            {% csrf_token %}
+            <button
+              type="submit"
+              class="btn btn-success btn-lg w-100 fw-bold shadow-sm"
+            >
+              <i class="bi bi-check-circle-fill me-2"></i> Confirm Payment
+            </button>
+          </form>
+          <a
+            href="{% url 'course_detail' course.id %}"
+            class="btn btn-link text-muted mt-3"
+            >Cancel</a
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
